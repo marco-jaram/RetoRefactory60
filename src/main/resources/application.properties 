@@ -1,0 +1,9 @@
+# Configuración H2
+spring.datasource.url=jdbc:h2:mem:bookstoredb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.h2.console.enabled=true
+
+# Logging
+logging.level.com.refactoring=DEBUG
