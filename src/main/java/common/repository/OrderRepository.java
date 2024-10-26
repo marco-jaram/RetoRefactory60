@@ -6,6 +6,7 @@ import common.model.OrderItem;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -23,7 +24,11 @@ public class OrderRepository {
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             connection.setAutoCommit(false);
 
-            stmt.setTimestamp(1, Timestamp.valueOf(order.getOrderDate()));
+            // Si la fecha es null, usar la fecha actual
+            LocalDateTime orderDate = order.getOrderDate() != null ? order.getOrderDate() : LocalDateTime.now();
+            order.setOrderDate(orderDate);
+
+            stmt.setTimestamp(1, Timestamp.valueOf(orderDate));
             stmt.setDouble(2, order.getTotalAmount());
             stmt.setString(3, order.getStatus().name());
             stmt.setString(4, order.getCustomerName());
@@ -34,7 +39,9 @@ public class OrderRepository {
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     order.setId(rs.getLong(1));
-                    saveOrderItems(order.getId(), order.getItems());
+                    if (order.getItems() != null && !order.getItems().isEmpty()) {
+                        saveOrderItems(order.getId(), order.getItems());
+                    }
                 }
             }
 
@@ -75,6 +82,4 @@ public class OrderRepository {
             throw new RuntimeException("Error saving order items", e);
         }
     }
-
-    // Implementar el resto de métodos...
 }

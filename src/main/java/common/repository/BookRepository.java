@@ -2,6 +2,7 @@ package common.repository;
 
 import common.model.Book;
 import common.model.PhilosophyCategory;
+import common.model.ProductType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
@@ -18,8 +19,8 @@ public class BookRepository implements ProductRepository<Book> {
 
     @Override
     public Book save(Book book) {
-        String sql = "INSERT INTO books (name, description, price, stock, author, isbn, publisher, category) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO books (name, description, price, stock, author, isbn, publisher, category, type) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, book.getName());
@@ -30,6 +31,7 @@ public class BookRepository implements ProductRepository<Book> {
             stmt.setString(6, book.getIsbn());
             stmt.setString(7, book.getPublisher());
             stmt.setString(8, book.getCategory().name());
+            stmt.setString(9, ProductType.BOOK.name());  // Agregamos el tipo
 
             stmt.executeUpdate();
 
@@ -64,26 +66,6 @@ public class BookRepository implements ProductRepository<Book> {
         return Optional.empty();
     }
 
-    @Override
-    public List<Book> findAll() {
-        return List.of();
-    }
-
-    @Override
-    public void update(Book product) {
-
-    }
-
-    @Override
-    public void delete(Long id) {
-
-    }
-
-    @Override
-    public void updateStock(Long id, int quantity) {
-
-    }
-
     private Book mapResultSetToBook(ResultSet rs) throws SQLException {
         return Book.builder()
                 .id(rs.getLong("id"))
@@ -95,8 +77,25 @@ public class BookRepository implements ProductRepository<Book> {
                 .isbn(rs.getString("isbn"))
                 .publisher(rs.getString("publisher"))
                 .category(PhilosophyCategory.valueOf(rs.getString("category")))
+                .type(ProductType.BOOK)
                 .build();
     }
 
-    // Implementar el resto de métodos...
+    // Los otros métodos permanecen igual...
+    @Override
+    public List<Book> findAll() {
+        return List.of();
+    }
+
+    @Override
+    public void update(Book product) {
+    }
+
+    @Override
+    public void delete(Long id) {
+    }
+
+    @Override
+    public void updateStock(Long id, int quantity) {
+    }
 }
