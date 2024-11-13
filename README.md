@@ -1,145 +1,97 @@
-# Arquitectura Base para Prácticas de Refactoring
+# Práctica de Patrones de Refactorización
 
-Este proyecto implementa una arquitectura base para una tienda de productos filosóficos (libros, juegos de mesa y e-readers) que servirá como fundamento para realizar prácticas de refactoring.
+Este proyecto es una práctica de aplicación de patrones de refactorización en un sistema de gestión de una tienda de libros de filosofia, juegos de mesa y lectores electronicos de libros
 
-## Estructura del Código Base
+## Lista de los nombres de refactory a practicar por orden de dificultad  y tipo
 
-```
-src/main/java/common/
-├── model/                  # Modelos de dominio
-│   ├── productos/
-│   │   ├── Product.java         # Clase base abstracta para productos
-│   │   ├── Book.java           # Libro filosófico
-│   │   ├── BoardGame.java      # Juego de mesa
-│   │   └── EReader.java        # Lector electrónico
-│   ├── order/
-│   │   ├── Order.java          # Orden de compra
-│   │   └── OrderItem.java      # Ítem individual en una orden
-│   └── enums/
-│       ├── BookCategory.java      # Categorías de libros
-│       ├── GameCategory.java      # Categorías de juegos
-│       ├── PhilosophyCategory.java # Categorías filosóficas
-│       ├── ProductType.java       # Tipos de productos
-│       └── OrderStatus.java       # Estados de la orden
-│
-├── repository/             # Capa de acceso a datos
-│   ├── DatabaseConnection.java # Singleton para conexión H2
-│   ├── ProductRepository.java  # Interface genérica para productos
-│   ├── BookRepository.java     # Implementación para libros
-│   └── OrderRepository.java    # Repositorio de órdenes
-│
-└── util/                  # Utilidades generales
-    ├── ProductUtils.java      # Utilidades para productos
-    └── ValidationUtils.java   # Validaciones comunes
+| 1. Extract Method | 2. Inline Method | 3. Extract Variable |
+|-------------------|------------------|---------------------|
+| 4. Inline Temp | 5. Replace Temp with Query | 6. Split Temporary Variable |
+| 7. Remove Assignments to Parameters | 8. Replace Method with Method Object | 9. Substitute Algorithm |
+| 10. Move Method | 11. Move Field | 12. Extract Class |
+| 13. Inline Class | 14. Hide Delegate | 15. Remove Middle Man |
+| 16. Introduce Foreign Method | 17. Introduce Local Extension | 18. Self Encapsulate Field |
+| 19. Replace Data Value with Object | 20. Change Value to Reference | 21. Change Reference to Value |
+| 22. Replace Array with Object | 23. Duplicate Observed Data | 24. Change Unidirectional Association to Bidirectional |
+| 25. Change Bidirectional Association to Unidirectional | 26. Replace Magic Number with Symbolic Constant | 27. Encapsulate Field |
+| 28. Encapsulate Collection | 29. Replace Type Code with Class | 30. Replace Type Code with Subclasses |
+| 31. Replace Type Code with State/Strategy | 32. Replace Subclass with Fields | 33. Decompose Conditional |
+| 34. Consolidate Conditional Expression | 35. Consolidate Duplicate Conditional Fragments | 36. Remove Control Flag |
+| 37. Replace Nested Conditional with Guard Clauses | 38. Replace Conditional with Polymorphism | 39. Introduce Null Object |
+| 40. Introduce Assertion | 41. Rename Method | 42. Add Parameter |
+| 43. Remove Parameter | 44. Separate Query from Modifier | 45. Parameterize Method |
+| 46. Replace Parameter with Explicit Methods | 47. Preserve Whole Object | 48. Replace Parameter with Method Call |
+| 49. Introduce Parameter Object | 50. Remove Setting Method | 51. Hide Method |
+| 52. Replace Constructor with Factory Method | 53. Replace Error Code with Exception | 54. Replace Exception with Test |
+| 55. Pull Up Field | 56. Pull Up Method | 57. Pull Up Constructor Body |
+| 58. Push Down Method | 59. Push Down Field | 60. Extract Subclass |
 
-src/main/resources/
-└── db/
-    ├── schema.sql            # Definición de la estructura de BD
-    └── data.sql             # Datos iniciales de prueba
 
-src/test/java/common/
-└── IntegrationTest.java    # Prueba la integración de componentes
-```
+## Estructura del Proyecto
 
-## Componentes Principales
+El proyecto sigue una estructura de paquetes basada en arquitectura limpia (clean architecture):
 
-### 1. Modelos (Model)
-- Utilizan Lombok para reducir código boilerplate
-- Implementan herencia para productos específicos
-- Usan enums para categorización
+- `common`: Contiene clases y utilidades comunes utilizadas en todo el proyecto.
+    - `model`: Contiene las clases de modelo que representan las entidades del dominio, como `Book`, `BoardGame`, `EReader`, `Order`, entre otras.
+    - `repository`: Contiene las interfaces y implementaciones de los repositorios para acceder a los datos.
+        - `BookRepository`: Repositorio específico para gestionar los libros.
+        - `ProductRepository`: Interfaz genérica para repositorios de productos.
+        - `OrderRepository`: Repositorio para gestionar las órdenes.
+        - `DatabaseConnection`: Clase para establecer y gestionar la conexión con la base de datos.
+    - `util`: Contiene clases de utilidad.
+        - `ProductUtils`: Utilidades relacionadas con los productos, como cálculo de precios y formateo de información.
+        - `ValidationUtils`: Utilidades de validación para productos y órdenes.
+- `refactory_practices`: Contiene ejemplos de aplicación de prácticas de refactorización.
+    - `practice01_extract_method_test`: Ejemplo de aplicación del patrón Extract Method.
+        - `BookDiscountCalculatorAfter`: Clase después de aplicar el patrón.
+        - `BookDiscountCalculatorBefore`: Clase antes de aplicar el patrón.
+    - `practice02_inline_method_test`: Ejemplo de aplicación del patrón Inline Method.
+- `resources`: Contiene archivos de recursos del proyecto.
+    - `db`: Contiene scripts SQL para la configuración de la base de datos.
+        - `schema.sql`: Script para crear la estructura de la base de datos.
+        - `data.sql`: Script para insertar datos de ejemplo en la base de datos.
 
-```java
-@Data @SuperBuilder @NoArgsConstructor
-public abstract class Product {
-    private Long id;
-    private String name;
-    private String description;
-    private double price;
-    private int stock;
-    private ProductType type;
-}
-```
+## Prácticas de Refactorización
 
-### 2. Repositorios (Repository)
-- Implementan el patrón Repository
-- Utilizan H2 como base de datos en memoria
-- Manejan el CRUD básico de entidades
+El proyecto incluye ejemplos de aplicación de los siguientes patrones de refactorización:
 
-```java
-public interface ProductRepository<T extends Product> {
-    T save(T product);
-    Optional<T> findById(Long id);
-    List<T> findAll();
-    void update(T product);
-    void delete(Long id);
-}
-```
+1. **Extract Method**: Consiste en extraer un fragmento de código en un nuevo método para mejorar la legibilidad y reutilización del código.
 
-### 3. Base de Datos
-- H2 en memoria para desarrollo y pruebas
-- Schema definido en `schema.sql`
-- Datos de prueba en `data.sql`
+2. **Inline Method**: Consiste en reemplazar una llamada a un método con el cuerpo del método directamente en el lugar de la llamada, cuando el método es muy simple y no aporta claridad.
 
-### 4. Utilidades
-- Métodos comunes para manipulación de productos
-- Validaciones reutilizables
-- Código candidato para refactoring
+## Configuración de la Base de Datos
 
-## Tecnologías Utilizadas
+El proyecto utiliza una base de datos H2 en memoria. Los scripts SQL para la creación de la estructura de la base de datos y la inserción de datos de ejemplo se encuentran en la carpeta `resources/db`.
 
-- Java 17
-- H2 Database
-- Lombok
-- SLF4J para logging
-- JUnit 5 para testing
+- `schema.sql`: Contiene las sentencias SQL para crear las tablas necesarias en la base de datos.
+- `data.sql`: Contiene las sentencias SQL para insertar datos de ejemplo en las tablas.
 
-## Configuración Maven
+## Dependencias
 
-```xml
-<dependencies>
-    <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <version>${h2.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>${lombok.version}</version>
-    </dependency>
-    <!-- ... otras dependencias ... -->
-</dependencies>
-```
+El proyecto utiliza las siguientes dependencias principales:
 
-## Flujo de Datos Típico
+- H2 Database: Base de datos en memoria utilizada para almacenar y recuperar datos.
+- Lombok: Biblioteca que ayuda a reducir el código repetitivo mediante anotaciones.
+- SLF4J: Fachada para logging.
 
-1. El cliente realiza una orden que puede contener diferentes tipos de productos
-2. Cada producto se gestiona a través de su repositorio específico
-3. Las órdenes se procesan y almacenan en la base de datos
-4. Se actualizan los stocks de productos
+Puedes encontrar el detalle completo de las dependencias en el archivo `pom.xml`.
 
-## Consideraciones para Refactoring
+## Ejecutar el Proyecto
 
-Este código base contiene varios "code smells" intencionales que servirán como punto de partida para las prácticas de refactoring:
+Para ejecutar el proyecto, sigue estos pasos:
 
-1. Métodos largos en las utilidades
-2. Uso excesivo de primitivos
-3. Clases con múltiples responsabilidades
-4. Duplicación de código en validaciones
-5. Switch statements que podrían ser polimorfismo
-6. Data classes que podrían tener más comportamiento
+1. Clona el repositorio en tu máquina local.
+2. Asegúrate de tener Java y Maven instalados.
+3. Abre el proyecto en tu IDE favorito.
+4. Compila el proyecto utilizando Maven.
+5. Ejecuta los tests unitarios para ver los ejemplos de refactorización en acción.
 
-## Prácticas de Refactoring
+## Contribución
 
-Las prácticas de refactoring se organizarán en carpetas separadas:
-```
-src/main/java/section1/practice01_extract_method/
-├── before/    # Código original
-└── after/     # Código refactorizado
-```
+Si deseas contribuir a este proyecto, por favor sigue estos pasos:
 
-Cada práctica:
-1. Utilizará este código base
-2. Implementará una técnica específica de refactoring
-3. Mantendrá sus propios tests
-4. Documentará el proceso en su README.md
+1. Haz un fork del repositorio.
+2. Crea una rama con un nombre descriptivo para tu contribución.
+3. Realiza tus cambios y asegúrate de que los tests pasen.
+4. Envía un pull request describiendo tus cambios.
+

@@ -68,15 +68,22 @@ public class OrderRepository {
         String sql = "INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase) " +
                 "VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             for (OrderItem item : items) {
                 stmt.setLong(1, orderId);
                 stmt.setLong(2, item.getProduct().getId());
                 stmt.setInt(3, item.getQuantity());
                 stmt.setDouble(4, item.getPriceAtPurchase());
-                stmt.addBatch();
+                stmt.executeUpdate();  // Cambiado de addBatch() a executeUpdate()
+
+                // Obtener el ID generado para el item
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        item.setId(rs.getLong(1));
+                        item.setOrderId(orderId);
+                    }
+                }
             }
-            stmt.executeBatch();
         } catch (SQLException e) {
             log.error("Error saving order items", e);
             throw new RuntimeException("Error saving order items", e);
