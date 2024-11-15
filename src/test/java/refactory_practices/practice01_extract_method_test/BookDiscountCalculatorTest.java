@@ -6,8 +6,8 @@ package refactory_practices.practice01_extract_method_test;
 
 
 import org.junit.jupiter.api.Test;
-import refactory_practices.practice01_extract_method_test.book_discount.BookDiscountCalculatorAfter;
-import refactory_practices.practice01_extract_method_test.book_discount.BookDiscountCalculatorBefore;
+import refactory_practices.practice01_extract_method.book_discount.BookDiscountCalculatorAfter;
+import refactory_practices.practice01_extract_method.book_discount.BookDiscountCalculatorBefore;
 
 import static org.junit.jupiter.api.Assertions.*;
 

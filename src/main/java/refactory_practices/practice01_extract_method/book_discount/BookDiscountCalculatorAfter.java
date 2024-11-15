@@ -1,4 +1,4 @@
-package refactory_practices.practice01_extract_method_test.book_discount;
+package refactory_practices.practice01_extract_method.book_discount;
 
 public class BookDiscountCalculatorAfter {
     public double calculateDiscount(double bookPrice, int customerAge, boolean isPhilosophyStudent, boolean isPremiumMember) {
