@@ -95,3 +95,6 @@ Si deseas contribuir a este proyecto, por favor sigue estos pasos:
 3. Realiza tus cambios y asegúrate de que los tests pasen.
 4. Envía un pull request describiendo tus cambios.
 
+## Actualizaciones
+ - Semanalmente entre 3 a 5  diferentes
+ - Terminacion del reto aproximado: enero 15 de 2024
